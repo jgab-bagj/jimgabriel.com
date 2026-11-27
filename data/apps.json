@@ -1,0 +1,361 @@
+{
+  "site": {
+    "domain": "https://www.jimgabriel.com",
+    "brandName": "Jim Gabriel",
+    "developerLegalName": "James Gabriel",
+    "tagline": "Tactile games & playful apps, built to own.",
+    "heroDescription": "Independent developer crafting expressive, touch-first games and interactive toys for iOS, iPadOS, and macOS — with Android releases on the way.",
+    "contactEmail": "jimgabriel2021@gmail.com",
+    "appStoreDeveloperUrl": "https://apps.apple.com/us/developer/james-louis-gabriel/id6833727433",
+    "googlePlayDeveloperUrl": "",
+    "androidStatusBanner": "Android versions are currently in development. More games and interactive apps coming soon.",
+    "pillars": [
+      {
+        "title": "Pay Once, Own Forever",
+        "description": "Every release is a straightforward $0.99 one-time purchase. No subscriptions, no paywalls, and no in-app purchases."
+      },
+      {
+        "title": "Zero Ads, Zero Tracking",
+        "description": "No accounts required, no ad networks, and no personal data collected. Your apps stay cleanly on your device."
+      },
+      {
+        "title": "Built for Touch & Play",
+        "description": "Designed around tactile multitouch, responsive haptics, atmospheric sound, and offline play anywhere."
+      }
+    ]
+  },
+  "apps": [
+    {
+      "slug": "rock-paper-carnage",
+      "title": "Rock, Paper, Carnage",
+      "subtitle": "Rock, paper, scissors with finishing moves.",
+      "category": "Game · Action / Arcade",
+      "status": "live",
+      "accent": "#ff4545",
+      "accentSecondary": "#f5b726",
+      "accentRgb": "255, 69, 69",
+      "price": "$0.99",
+      "pricingNote": "One-time purchase · iOS & iPadOS · No ads · No IAP",
+      "platforms": ["iOS", "iPadOS"],
+      "platformLabel": "iOS & iPadOS",
+      "minOs": "iOS / iPadOS 15.0+",
+      "rating": "12+ / 13+",
+      "version": "1.0",
+      "releaseDate": "November 15, 2026",
+      "offline": true,
+      "stores": {
+        "ios": "https://apps.apple.com/us/app/rock-paper-carnage/id6833727431",
+        "android": {
+          "status": "coming-soon",
+          "url": ""
+        }
+      },
+      "icon": "assets/apps/rock-paper-carnage/icon.jpg",
+      "heroImage": "assets/apps/rock-paper-carnage/screenshot-01-cannon.jpg",
+      "trailer": {
+        "src": "assets/apps/rock-paper-carnage/trailer.mp4",
+        "poster": "assets/apps/rock-paper-carnage/screenshot-01-cannon.jpg",
+        "title": "Official Launch Trailer",
+        "caption": "Spot the tell, nail the combo, and unleash the finishing move."
+      },
+      "screenshotOrientation": "landscape",
+      "shortDescription": "You're a contestant on the galaxy's most violent game show, and the only thing you brought is your hand. Spot tells, nail combo finishers, and survive eight wild arenas.",
+      "leadParagraph": "You were on your couch. Now you're a contestant on the galaxy's most violent game show, and the only thing you brought is your hand.",
+      "bodyParagraphs": [
+        "Rock, Paper, Carnage is rock, paper, scissors with finishing moves. Win the throw, punch in the combo before the clock runs out, and your hand turns into a boulder, a buzzsaw, a storm of paper cuts, and more. Miss it and the crowd boos. Lose the round and your opponent finishes you."
+      ],
+      "features": [
+        {
+          "title": "Read Your Opponent",
+          "description": "Every opponent has a tell — and most of the time it tells the truth. Spot it, throw what beats it, and earn that level's signature finisher."
+        },
+        {
+          "title": "Rhythm Showdowns",
+          "description": "Throw the same sign and your hands lock into a rhythm duel set to an original song. Win a showdown for a star; two stars unlock your Ultimate."
+        },
+        {
+          "title": "Eight Opponents, Eight Arenas",
+          "description": "Face a baby monkey under the circus big top, a toddler at daycare, an orangutan in the rainforest canopy, a coworker in the office break room, a bodybuilder at the beach gym, a silverback in the aquarium hall, the Galactic Warlord, and the Kraken."
+        },
+        {
+          "title": "Unlock More Carnage",
+          "description": "Earn points on the reward track to unlock finishers like the Wrecking Ball, the Guillotine, and the Meteor — plus blood styles from slime to confetti. Beat a boss to unlock Hard Mode."
+        }
+      ],
+      "highlights": [
+        "$0.99 one-time purchase — no ads, no in-app purchases",
+        "Plays completely offline",
+        "Built for touch with haptics on every press",
+        "Universal iOS and iPadOS app"
+      ],
+      "screenshots": [
+        {
+          "src": "assets/apps/rock-paper-carnage/screenshot-01-cannon.jpg",
+          "alt": "Rock, Paper, Carnage circus big top cannon finisher",
+          "caption": "Circus Big Top — confetti, chaos, and cannon finishers"
+        },
+        {
+          "src": "assets/apps/rock-paper-carnage/screenshot-02-microwave.jpg",
+          "alt": "Rock, Paper, Carnage office break room microwave finisher",
+          "caption": "Office Break Room — settle workplace disputes the hard way"
+        },
+        {
+          "src": "assets/apps/rock-paper-carnage/screenshot-03-davyjones.jpg",
+          "alt": "Rock, Paper, Carnage Davy Jones Kraken finisher",
+          "caption": "The Kraken — survive the deep sea's hungriest challenger"
+        },
+        {
+          "src": "assets/apps/rock-paper-carnage/screenshot-04-feeding.jpg",
+          "alt": "Rock, Paper, Carnage aquarium hall arena",
+          "caption": "Aquarium Hall — square off against the silverback"
+        },
+        {
+          "src": "assets/apps/rock-paper-carnage/screenshot-05-abducted.jpg",
+          "alt": "Rock, Paper, Carnage Galactic Warlord arena",
+          "caption": "Galactic Warlord — intergalactic game show showdown"
+        }
+      ],
+      "notices": [],
+      "faq": [
+        {
+          "q": "Where is my progress saved?",
+          "a": "All game progress is saved locally on your device. Deleting the app removes your saved progress."
+        },
+        {
+          "q": "Does the game require an internet connection?",
+          "a": "No. Rock, Paper, Carnage plays completely offline."
+        },
+        {
+          "q": "Are there ads or in-app purchases?",
+          "a": "No. It is a single $0.99 one-time purchase with zero ads and zero in-app purchases."
+        },
+        {
+          "q": "Why does iOS mention the camera or microphone in diagnostics?",
+          "a": "That reference comes from code bundled inside the game engine's video player. Rock, Paper, Carnage never accesses your camera or microphone."
+        }
+      ],
+      "privacySummary": "Rock, Paper, Carnage collects no personal data, requires no account, and contains no third-party ad or analytics trackers."
+    },
+    {
+      "slug": "plasma-globe",
+      "title": "Plasma Globe: Fidget Lamp",
+      "subtitle": "A classic plasma ball under your fingers.",
+      "category": "Interactive · Fidget & Desk Lamp",
+      "status": "live",
+      "accent": "#c084fc",
+      "accentSecondary": "#f472b6",
+      "accentRgb": "192, 132, 252",
+      "price": "$0.99",
+      "pricingNote": "One purchase covers iOS, iPadOS & macOS · No ads · No IAP",
+      "platforms": ["iOS", "iPadOS", "macOS"],
+      "platformLabel": "iOS, iPadOS & macOS",
+      "minOs": "iOS / iPadOS 17.0+ · macOS",
+      "rating": "4+",
+      "version": "1.0",
+      "releaseDate": "November 18, 2026",
+      "offline": true,
+      "stores": {
+        "ios": "https://apps.apple.com/us/app/plasma-globe-fidget-lamp/id6835380705",
+        "android": {
+          "status": "coming-soon",
+          "url": ""
+        }
+      },
+      "icon": "assets/apps/plasma-globe/icon.jpg",
+      "heroImage": "assets/apps/plasma-globe/hero-ipad.jpg",
+      "screenshotOrientation": "portrait",
+      "shortDescription": "Touch the glass and lightning leaps from the coil to meet you — one bolt for every finger, complete with haptics, parallax tilt, ten lightning hues, and desk lamp mode.",
+      "leadParagraph": "Plasma Globe puts a classic plasma ball under your fingers. Touch the glass and lightning leaps from the coil to meet you, one bolt for every finger.",
+      "bodyParagraphs": [
+        "Built to feel alive on a desk or in your hands, Plasma Globe pairs real multitouch lightning with responsive haptics, subtle tilt parallax, and rich night-room ambience. Leave it untouched and it settles into a calm, glowing desk lamp."
+      ],
+      "features": [
+        {
+          "title": "Real Multitouch Lightning",
+          "description": "Every finger draws its own crackling filament — up to five simultaneous bolts on iPhone and even more on iPad."
+        },
+        {
+          "title": "Tactile Haptics & Sound",
+          "description": "Feel a low electric hum and sharp snaps on iPhone as arcs jump to your fingertips, paired with reactive crackle and night-time ambience of crickets, crows, and the occasional cat."
+        },
+        {
+          "title": "Ten Colors & Spectrum Tube",
+          "description": "Pick from ten vivid lightning presets or sweep continuously across the spectrum tube to tune any wavelength."
+        },
+        {
+          "title": "Atmosphere & Desk Lamp Mode",
+          "description": "Tilt your device to peer around the glass sphere amid drifting fog, a swinging lamp, and moving shadows. The screen stays awake, settling into a calm glow when left untouched."
+        }
+      ],
+      "highlights": [
+        "One $0.99 purchase covers iOS, iPadOS, and macOS",
+        "No accounts, no ads, and no data collected",
+        "Screen-awake desk lamp mode for ambient lighting",
+        "Tilt parallax and multitouch haptics"
+      ],
+      "screenshots": [
+        {
+          "src": "assets/apps/plasma-globe/screenshot-01-01-violet.jpg",
+          "alt": "Plasma Globe classic electric violet lightning",
+          "caption": "Classic Violet — multitouch lightning arcs leaping to the glass"
+        },
+        {
+          "src": "assets/apps/plasma-globe/screenshot-02-02-selector.jpg",
+          "alt": "Plasma Globe color and spectrum selector",
+          "caption": "Spectrum Selector — ten presets plus continuous wavelength tuning"
+        },
+        {
+          "src": "assets/apps/plasma-globe/screenshot-03-03-gold.jpg",
+          "alt": "Plasma Globe warm solar gold filaments",
+          "caption": "Solar Gold — warm ambient desk lamp glow"
+        },
+        {
+          "src": "assets/apps/plasma-globe/screenshot-04-04-green.jpg",
+          "alt": "Plasma Globe emerald green plasma arcs",
+          "caption": "Emerald Glow — rich neon green electric arcs"
+        },
+        {
+          "src": "assets/apps/plasma-globe/screenshot-05-05-hot-pink.jpg",
+          "alt": "Plasma Globe hot pink lightning filaments",
+          "caption": "Hot Pink — electric magenta plasma filaments"
+        }
+      ],
+      "notices": [
+        {
+          "title": "Tip for iPad Users",
+          "text": "Four- and five-finger swipes belong to iPadOS system gestures. To rest your whole hand flat on the glass, disable them in Settings → Multitasking & Gestures."
+        },
+        {
+          "title": "Visual Sensitivity Note",
+          "text": "Contains flickering and flashing light effects."
+        }
+      ],
+      "faq": [
+        {
+          "q": "Does one purchase work across all my Apple devices?",
+          "a": "Yes — a single $0.99 purchase unlocks Plasma Globe across iOS, iPadOS, and macOS."
+        },
+        {
+          "q": "Can I leave it running as a desk lamp?",
+          "a": "Yes. Plasma Globe keeps your screen awake and automatically settles into a calmer ambient glow whenever it's left untouched."
+        },
+        {
+          "q": "Does it require an account or internet connection?",
+          "a": "No accounts, no internet required, no ads, and zero data collection."
+        }
+      ],
+      "privacySummary": "Plasma Globe: Fidget Lamp requires no account, shows no ads, and collects zero personal data."
+    },
+    {
+      "slug": "school-time",
+      "title": "School Time!",
+      "subtitle": "A living reef aquarium you can touch — and a timer you can watch.",
+      "category": "Interactive · Reef Timer & Aquarium",
+      "status": "live",
+      "accent": "#38bdf8",
+      "accentSecondary": "#facc15",
+      "accentRgb": "56, 189, 248",
+      "price": "$0.99",
+      "pricingNote": "One-time purchase · iPad & macOS · No ads · No tracking",
+      "platforms": ["iPad", "macOS"],
+      "platformLabel": "iPad & macOS",
+      "minOs": "iPadOS 18.0+ · macOS",
+      "rating": "4+",
+      "version": "1.0",
+      "releaseDate": "November 18, 2026",
+      "offline": true,
+      "stores": {
+        "ios": "https://apps.apple.com/us/app/school-time/id6835664971",
+        "android": {
+          "status": "coming-soon",
+          "url": ""
+        }
+      },
+      "icon": "assets/apps/school-time/icon.jpg",
+      "heroImage": "assets/apps/school-time/screenshot-01-01_school_and_timer.jpg",
+      "screenshotOrientation": "tablet",
+      "shortDescription": "Lead 1,600 golden fish across a vibrant coral reef with your fingertips — then set a timer and release a pack of barracuda to hunt the school down to the final second.",
+      "leadParagraph": "School Time is a living reef aquarium you can touch, and a timer you can watch.",
+      "bodyParagraphs": [
+        "Sixteen hundred golden fish swim as one across a sunlit coral reef. Lead them with a finger, split the school with two hands, or let them roam freely on a second screen. When it's time to focus, set any timer from 30 seconds to 2 hours and press HUNT — a pack of barracuda drops in and catches the fish at the exact pace of your countdown."
+      ],
+      "features": [
+        {
+          "title": "Lead 1,600 Golden Fish",
+          "description": "Touch the glass and the entire school follows your finger. Spread two fingers to split the school in two, bring them together to merge, or tap to startle them."
+        },
+        {
+          "title": "The Barracuda Countdown",
+          "description": "Set any timer from 0:30 to 2:00:00 and press HUNT. One glance tells you how much time remains: it's the size of the school. When the last fish disappears in a puff of bubbles, a buoy bell rings."
+        },
+        {
+          "title": "Four Living Reef Views",
+          "description": "Explore corals, sea fans, sponges, clownfish, tangs, parrotfish, and nautiluses from four camera perspectives — in the tank, gallery window, down the reef, or swimming with the school — each with pan and zoom."
+        },
+        {
+          "title": "Built for Focus & Everyday Timers",
+          "description": "Keeps ticking in the background with optional finish notifications, subtle sonar pings, pause/resume controls, and an automatic power saver for long sessions."
+        }
+      ],
+      "highlights": [
+        "Timers from 30 seconds to 2 hours with exact custom entry",
+        "No blood or gore — caught fish vanish in a puff of bubbles",
+        "Works offline with no accounts, no ads, and no tracking",
+        "Great for focus sessions, study breaks, board games, or tea"
+      ],
+      "screenshots": [
+        {
+          "src": "assets/apps/school-time/screenshot-01-01_school_and_timer.jpg",
+          "alt": "School Time reef aquarium with 1,600 golden fish and timer bar",
+          "caption": "1,600 golden fish schooling across the reef with timer controls"
+        },
+        {
+          "src": "assets/apps/school-time/screenshot-02-02_hunt_0_36.jpg",
+          "alt": "School Time barracuda hunting during a countdown",
+          "caption": "The Hunt Begins — barracuda pace the countdown fish by fish"
+        },
+        {
+          "src": "assets/apps/school-time/screenshot-03-03_with_the_school.jpg",
+          "alt": "School Time camera swimming along with the school",
+          "caption": "Swim With the School — follow the golden shoal up close"
+        },
+        {
+          "src": "assets/apps/school-time/screenshot-04-04_nearly_done.jpg",
+          "alt": "School Time nearly finished timer with small remaining school",
+          "caption": "Nearly Done — read remaining time at a single glance"
+        },
+        {
+          "src": "assets/apps/school-time/screenshot-05-05_times_up.jpg",
+          "alt": "School Time countdown complete on the coral reef",
+          "caption": "Time's Up — the last fish vanishes and the buoy bell rings"
+        },
+        {
+          "src": "assets/apps/school-time/screenshot-06-06_close_up.jpg",
+          "alt": "School Time close-up view of coral reef and sea life",
+          "caption": "Coral Reef Details — vibrant corals, anemones, and reef fish"
+        },
+        {
+          "src": "assets/apps/school-time/screenshot-07-07_long_view.jpg",
+          "alt": "School Time long panoramic gallery view of the reef",
+          "caption": "Long Gallery View — pan and zoom across four camera angles"
+        }
+      ],
+      "notices": [],
+      "faq": [
+        {
+          "q": "Does the timer keep running if I lock my screen or switch apps?",
+          "a": "Yes. The timer stays accurate in the background and sends a notification when time is up if notifications are allowed."
+        },
+        {
+          "q": "Is it kid-friendly?",
+          "a": "Yes — rated 4+ with no blood or gore. When a barracuda catches a fish, it disappears in a puff of bubbles."
+        },
+        {
+          "q": "Can I just watch the aquarium without setting a timer?",
+          "a": "Absolutely. Lift your hand and the school roams naturally across the reef, making it great to leave running on an iPad or second screen."
+        }
+      ],
+      "privacySummary": "School Time! works completely offline, requires no account, displays no ads, and collects no personal data or tracking."
+    }
+  ]
+}
