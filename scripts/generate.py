@@ -6,8 +6,9 @@ Reads data/apps.json and generates:
   - index.html
   - <app-slug>/index.html for every app in data/apps.json
   - 404.html
-  - sitemap.xml
+  - sitemap.xml (with Google Image Sitemap entries)
   - robots.txt
+  - llms.txt & llms-full.txt (AI search / LLM-friendly summaries)
 
 Zero external dependencies — runs with built-in macOS python3:
   python3 scripts/generate.py
@@ -17,7 +18,9 @@ from __future__ import annotations
 
 import html
 import json
-from datetime import date
+import re
+import struct
+from datetime import date, datetime
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -35,20 +38,327 @@ PLAY_ICON_SVG = (
     "</svg>"
 )
 
+_IMAGE_DIM_CACHE: dict[str, tuple[int, int] | None] = {}
+
+_JPEG_SOF_MARKERS = {
+    0xC0, 0xC1, 0xC2, 0xC3,
+    0xC5, 0xC6, 0xC7,
+    0xC9, 0xCA, 0xCB,
+    0xCD, 0xCE, 0xCF,
+}
+
 
 def esc(value: str) -> str:
     return html.escape(str(value), quote=True)
+
+
+def get_image_dimensions(rel_path: str) -> tuple[int, int] | None:
+    """Read (width, height) from local JPEG or PNG headers using stdlib only."""
+    if not rel_path:
+        return None
+    if rel_path in _IMAGE_DIM_CACHE:
+        return _IMAGE_DIM_CACHE[rel_path]
+
+    img_path = ROOT / rel_path.lstrip("/")
+    if not img_path.is_file():
+        _IMAGE_DIM_CACHE[rel_path] = None
+        return None
+
+    dims: tuple[int, int] | None = None
+    try:
+        with img_path.open("rb") as fh:
+            head = fh.read(24)
+            # PNG: 8-byte signature + 4-byte length + 'IHDR' + 4-byte width + 4-byte height
+            if len(head) >= 24 and head[:8] == b"\x89PNG\r\n\x1a\n" and head[12:16] == b"IHDR":
+                w, h = struct.unpack(">II", head[16:24])
+                dims = (w, h)
+            # JPEG: 0xFF 0xD8 followed by segments until a SOF marker
+            elif len(head) >= 2 and head[:2] == b"\xff\xd8":
+                fh.seek(2)
+                while True:
+                    byte = fh.read(1)
+                    if not byte:
+                        break
+                    if byte != b"\xff":
+                        continue
+                    marker_byte = fh.read(1)
+                    while marker_byte == b"\xff":
+                        marker_byte = fh.read(1)
+                    if not marker_byte:
+                        break
+                    marker = marker_byte[0]
+                    # Standalone markers without length
+                    if marker == 0x01 or (0xD0 <= marker <= 0xD9):
+                        if marker == 0xD9:  # EOI
+                            break
+                        continue
+                    seg_len_bytes = fh.read(2)
+                    if len(seg_len_bytes) < 2:
+                        break
+                    seg_len = struct.unpack(">H", seg_len_bytes)[0]
+                    if seg_len < 2:
+                        break
+                    if marker in _JPEG_SOF_MARKERS:
+                        sof = fh.read(5)
+                        if len(sof) == 5:
+                            h, w = struct.unpack(">HH", sof[1:5])
+                            dims = (w, h)
+                        break
+                    fh.seek(seg_len - 2, 1)
+    except OSError:
+        dims = None
+
+    _IMAGE_DIM_CACHE[rel_path] = dims
+    return dims
+
+
+def img_dim_attrs(rel_path: str) -> str:
+    dims = get_image_dimensions(rel_path)
+    if not dims:
+        return ""
+    return f' width="{dims[0]}" height="{dims[1]}"'
+
+
+def parse_iso_date(raw: str | None) -> str | None:
+    if not raw:
+        return None
+    text = str(raw).strip()
+    if re.fullmatch(r"\d{4}-\d{2}-\d{2}", text):
+        return text
+    for fmt in ("%B %d, %Y", "%b %d, %Y", "%Y-%m-%dT%H:%M:%SZ"):
+        try:
+            return datetime.strptime(text, fmt).date().isoformat()
+        except ValueError:
+            continue
+    return None
+
+
+def parse_price_value(price: str) -> tuple[str, bool]:
+    cleaned = re.sub(r"[^0-9.]", "", str(price or ""))
+    if not cleaned:
+        return "0.00", True
+    try:
+        numeric = float(cleaned)
+    except ValueError:
+        return cleaned, False
+    return cleaned, numeric == 0.0
+
+
+def parse_category(category: str) -> tuple[str, str]:
+    parts = [p.strip() for p in str(category or "").split("·", 1)]
+    if len(parts) == 2:
+        return parts[0], parts[1]
+    return parts[0], parts[0]
+
+
+def is_game_app(app: dict) -> bool:
+    schema_cat = str(app.get("schemaCategory", "")).lower()
+    if schema_cat:
+        return "game" in schema_cat
+    primary, _ = parse_category(app.get("category", ""))
+    return "game" in primary.lower()
+
+
+def build_home_seo_title(site: dict) -> str:
+    if site.get("seoTitle"):
+        return site["seoTitle"]
+    return f'{site["brandName"]} — Indie iOS, iPadOS & macOS Games & Apps'
+
+
+def build_app_seo_title(site: dict, app: dict) -> str:
+    if app.get("seoTitle"):
+        return app["seoTitle"]
+    primary, sub = parse_category(app.get("category", ""))
+    if primary.lower() == "game" and sub and sub.lower() != "game":
+        cat_phrase = f"{sub} Game"
+    elif sub:
+        cat_phrase = sub
+    else:
+        cat_phrase = app.get("category", "App")
+    plat = app.get("platformLabel") or ", ".join(app.get("platforms", []))
+    if plat:
+        return f'{app["title"]} — {cat_phrase} for {plat} | {site["brandName"]}'
+    return f'{app["title"]} — {cat_phrase} | {site["brandName"]}'
+
+
+def collect_site_same_as(site: dict) -> list[str]:
+    urls: list[str] = []
+    for key in ("appStoreDeveloperUrl", "googlePlayDeveloperUrl"):
+        val = site.get(key)
+        if val and val not in urls:
+            urls.append(val)
+    for extra in site.get("sameAs", []):
+        if extra and extra not in urls:
+            urls.append(extra)
+    return urls
+
+
+def collect_app_store_urls(app: dict) -> list[str]:
+    urls: list[str] = []
+    stores = app.get("stores", {})
+    ios_url = stores.get("ios")
+    if ios_url:
+        urls.append(ios_url)
+    android = stores.get("android", {})
+    if android.get("status") == "live" and android.get("url"):
+        urls.append(android["url"])
+    return urls
+
+
+def build_person_entity(site: dict, domain: str) -> dict:
+    person: dict = {
+        "@type": "Person",
+        "@id": f"{domain}/#person",
+        "name": site["developerLegalName"],
+        "alternateName": site["brandName"],
+        "url": f"{domain}/",
+        "jobTitle": "Independent Game & App Developer",
+        "description": site["heroDescription"],
+        "email": f'mailto:{site["contactEmail"]}',
+        "knowsAbout": [
+            "iOS Games",
+            "iPadOS Apps",
+            "macOS Apps",
+            "Indie Game Development",
+            "Interactive Touch Apps",
+            "Privacy-First Software",
+        ],
+    }
+    same_as = collect_site_same_as(site)
+    if same_as:
+        person["sameAs"] = same_as
+    return person
+
+
+def build_software_app_entity(
+    site: dict,
+    app: dict,
+    domain: str,
+    *,
+    full: bool = True,
+) -> dict:
+    canonical = f'{domain}/{app["slug"]}/'
+    og_image = f'{domain}/{app["heroImage"]}'
+    is_game = is_game_app(app)
+    app_type: str | list[str] = (
+        ["SoftwareApplication", "VideoGame"] if is_game else "SoftwareApplication"
+    )
+    app_category = app.get("schemaCategory") or (
+        "GameApplication" if is_game else "EntertainmentApplication"
+    )
+    _, sub_category = parse_category(app.get("category", ""))
+    price_val, is_free = parse_price_value(app.get("price", ""))
+    store_urls = collect_app_store_urls(app)
+    ios_url = app.get("stores", {}).get("ios", canonical)
+
+    offer = {
+        "@type": "Offer",
+        "price": price_val,
+        "priceCurrency": "USD",
+        "availability": "https://schema.org/InStock",
+        "url": ios_url,
+    }
+
+    entity: dict = {
+        "@type": app_type,
+        "@id": f"{canonical}#app",
+        "name": app["title"],
+        "url": canonical,
+        "description": app.get("seoDescription") or app["shortDescription"],
+        "image": og_image,
+        "applicationCategory": app_category,
+        "operatingSystem": app["minOs"],
+        "offers": offer,
+    }
+
+    if not full:
+        return entity
+
+    entity["applicationSubCategory"] = sub_category
+    entity["softwareVersion"] = app["version"]
+    iso_release = parse_iso_date(app.get("releaseDate"))
+    if iso_release:
+        entity["datePublished"] = iso_release
+    entity["contentRating"] = app["rating"]
+    entity["isAccessibleForFree"] = is_free
+
+    feature_list = [
+        f'{f["title"]}: {f["description"]}' for f in app.get("features", [])
+    ]
+    if feature_list:
+        entity["featureList"] = feature_list
+
+    screenshots = [f'{domain}/{s["src"]}' for s in app.get("screenshots", []) if s.get("src")]
+    if screenshots:
+        entity["screenshot"] = screenshots
+
+    if ios_url:
+        entity["installUrl"] = ios_url
+        entity["downloadUrl"] = ios_url
+    if store_urls:
+        entity["sameAs"] = store_urls
+
+    entity["author"] = {"@id": f"{domain}/#person"}
+    entity["publisher"] = {"@id": f"{domain}/#person"}
+    return entity
 
 
 def render_head(
     *,
     title: str,
     description: str,
-    canonical_url: str,
-    og_image_url: str,
+    site_name: str,
+    author: str,
     prefix: str,
+    canonical_url: str | None = None,
+    og_image_url: str | None = None,
+    og_image_alt: str | None = None,
+    og_image_dims: tuple[int, int] | None = None,
+    noindex: bool = False,
     json_ld: dict | None = None,
 ) -> str:
+    robots_content = (
+        "noindex, follow"
+        if noindex
+        else "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+    )
+
+    extra_links: list[str] = []
+    if canonical_url and not noindex:
+        extra_links.append(f'  <link rel="canonical" href="{esc(canonical_url)}">')
+    if not noindex:
+        extra_links.append(
+            f'  <link rel="alternate" type="text/plain" href="{prefix}llms.txt" title="LLM-friendly site summary">'
+        )
+    extra_links_block = ("\n" + "\n".join(extra_links)) if extra_links else ""
+
+    og_lines: list[str] = [
+        '  <meta property="og:type" content="website">',
+        f'  <meta property="og:site_name" content="{esc(site_name)}">',
+        '  <meta property="og:locale" content="en_US">',
+        f'  <meta property="og:title" content="{esc(title)}">',
+        f'  <meta property="og:description" content="{esc(description)}">',
+    ]
+    if canonical_url and not noindex:
+        og_lines.append(f'  <meta property="og:url" content="{esc(canonical_url)}">')
+    if og_image_url:
+        og_lines.append(f'  <meta property="og:image" content="{esc(og_image_url)}">')
+        if og_image_alt:
+            og_lines.append(f'  <meta property="og:image:alt" content="{esc(og_image_alt)}">')
+        if og_image_dims:
+            og_lines.append(f'  <meta property="og:image:width" content="{og_image_dims[0]}">')
+            og_lines.append(f'  <meta property="og:image:height" content="{og_image_dims[1]}">')
+
+    twitter_lines: list[str] = [
+        '  <meta name="twitter:card" content="summary_large_image">',
+        f'  <meta name="twitter:title" content="{esc(title)}">',
+        f'  <meta name="twitter:description" content="{esc(description)}">',
+    ]
+    if og_image_url:
+        twitter_lines.append(f'  <meta name="twitter:image" content="{esc(og_image_url)}">')
+        if og_image_alt:
+            twitter_lines.append(f'  <meta name="twitter:image:alt" content="{esc(og_image_alt)}">')
+
     json_ld_block = ""
     if json_ld:
         json_ld_block = (
@@ -64,18 +374,13 @@ def render_head(
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{esc(title)}</title>
   <meta name="description" content="{esc(description)}">
-  <link rel="canonical" href="{esc(canonical_url)}">
+  <meta name="author" content="{esc(author)}">
+  <meta name="robots" content="{robots_content}">
+  <meta name="theme-color" content="#0a0c12">{extra_links_block}
   <link rel="icon" type="image/svg+xml" href="{prefix}assets/favicon.svg">
 
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="{esc(title)}">
-  <meta property="og:description" content="{esc(description)}">
-  <meta property="og:url" content="{esc(canonical_url)}">
-  <meta property="og:image" content="{esc(og_image_url)}">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="{esc(title)}">
-  <meta name="twitter:description" content="{esc(description)}">
-  <meta name="twitter:image" content="{esc(og_image_url)}">
+{chr(10).join(og_lines)}
+{chr(10).join(twitter_lines)}
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -112,7 +417,6 @@ def render_footer(site: dict, apps: list[dict], prefix: str) -> str:
         f'            <li><a href="{prefix}{esc(app["slug"])}/">{esc(app["title"])}</a></li>'
         for app in apps
     )
-    play_link = ""
     if site.get("googlePlayDeveloperUrl"):
         play_link = f'\n            <li><a href="{esc(site["googlePlayDeveloperUrl"])}" target="_blank" rel="noopener noreferrer">Google Play ↗</a></li>'
     else:
@@ -207,7 +511,8 @@ def render_home(data: dict) -> str:
             if app.get("trailer")
             else ""
         )
-        fetch_prio = ' fetchpriority="high"' if idx == 0 else ' loading="lazy"'
+        fetch_prio = ' fetchpriority="high"' if idx == 0 else ' loading="lazy" decoding="async"'
+        hero_dims = img_dim_attrs(app["heroImage"])
 
         cards.append(
             f"""        <article class="app-card" data-orientation="{esc(app.get("screenshotOrientation", "landscape"))}" style="--accent: {esc(app["accent"])}; --accent-2: {esc(app["accentSecondary"])}; --accent-rgb: {esc(app["accentRgb"])};">
@@ -216,11 +521,11 @@ def render_home(data: dict) -> str:
               {status_pill}
               {android_pill}
             </div>
-            <img src="./{esc(app["heroImage"])}" alt="{esc(app["title"])} preview"{fetch_prio}>
+            <img src="./{esc(app["heroImage"])}" alt="{esc(app["title"])} preview"{hero_dims}{fetch_prio}>
           </a>
           <div class="app-card-body">
             <div class="app-card-head">
-              <img class="app-icon" src="./{esc(app["icon"])}" alt="{esc(app["title"])} icon" width="68" height="68" loading="lazy">
+              <img class="app-icon" src="./{esc(app["icon"])}" alt="{esc(app["title"])} icon" width="68" height="68" loading="lazy" decoding="async">
               <div class="app-card-titles">
                 <div class="app-card-category">{esc(app["category"])}</div>
                 <h3 class="app-card-title"><a href="./{esc(app["slug"])}/">{esc(app["title"])}</a></h3>
@@ -249,21 +554,73 @@ def render_home(data: dict) -> str:
         </div>"""
         )
 
-    og_image = f"{domain}/{apps[0]['heroImage']}" if apps else f"{domain}/assets/favicon.svg"
+    seo_title = build_home_seo_title(site)
+    seo_description = site.get("seoDescription") or site["heroDescription"]
+    og_rel_image = apps[0]["heroImage"] if apps else "assets/favicon.svg"
+    og_image = f"{domain}/{og_rel_image}"
+    og_image_alt = (
+        f'{apps[0]["title"]} — featured release by {site["brandName"]}'
+        if apps
+        else f'{site["brandName"]} portfolio'
+    )
+    og_dims = get_image_dimensions(og_rel_image)
+
+    item_list_elements = []
+    for pos, app in enumerate(apps, 1):
+        item_list_elements.append(
+            {
+                "@type": "ListItem",
+                "position": pos,
+                "url": f'{domain}/{app["slug"]}/',
+                "item": build_software_app_entity(site, app, domain, full=False),
+            }
+        )
+
+    json_ld = {
+        "@context": "https://schema.org",
+        "@graph": [
+            {
+                "@type": "WebSite",
+                "@id": f"{domain}/#website",
+                "url": f"{domain}/",
+                "name": site["brandName"],
+                "description": seo_description,
+                "inLanguage": "en-US",
+                "publisher": {"@id": f"{domain}/#person"},
+            },
+            build_person_entity(site, domain),
+            {
+                "@type": "CollectionPage",
+                "@id": f"{domain}/#webpage",
+                "url": f"{domain}/",
+                "name": seo_title,
+                "description": seo_description,
+                "inLanguage": "en-US",
+                "isPartOf": {"@id": f"{domain}/#website"},
+                "about": {"@id": f"{domain}/#person"},
+                "mainEntity": {"@id": f"{domain}/#itemlist"},
+            },
+            {
+                "@type": "ItemList",
+                "@id": f"{domain}/#itemlist",
+                "name": f'{site["brandName"]} Games & Apps',
+                "numberOfItems": len(apps),
+                "itemListElement": item_list_elements,
+            },
+        ],
+    }
+
     head = render_head(
-        title=f'{site["brandName"]} — Indie Games & Apps',
-        description=site["heroDescription"],
+        title=seo_title,
+        description=seo_description,
+        site_name=site["brandName"],
+        author=site["developerLegalName"],
         canonical_url=f"{domain}/",
         og_image_url=og_image,
+        og_image_alt=og_image_alt,
+        og_image_dims=og_dims,
         prefix="./",
-        json_ld={
-            "@context": "https://schema.org",
-            "@type": "Person",
-            "name": site["developerLegalName"],
-            "alternateName": site["brandName"],
-            "url": f"{domain}/",
-            "sameAs": [site["appStoreDeveloperUrl"]],
-        },
+        json_ld=json_ld,
     )
 
     return f"""{head}
@@ -356,6 +713,7 @@ def render_app_page(data: dict, app: dict) -> str:
     domain = site["domain"].rstrip("/")
     canonical = f'{domain}/{app["slug"]}/'
     og_image = f'{domain}/{app["heroImage"]}'
+    og_dims = get_image_dimensions(app["heroImage"])
     orientation = app.get("screenshotOrientation", "landscape")
     is_portrait = orientation == "portrait"
 
@@ -396,6 +754,7 @@ def render_app_page(data: dict, app: dict) -> str:
 
     gallery_items = []
     for idx, shot in enumerate(app.get("screenshots", [])):
+        shot_dims = img_dim_attrs(shot["src"])
         gallery_items.append(
             f"""          <button
             type="button"
@@ -405,7 +764,7 @@ def render_app_page(data: dict, app: dict) -> str:
             data-alt="{esc(shot["alt"])}"
             data-caption="{esc(shot["caption"])}"
             aria-label="Open full-size screenshot: {esc(shot["caption"])}">
-            <img src="../{esc(shot["src"])}" alt="{esc(shot["alt"])}" loading="lazy">
+            <img src="../{esc(shot["src"])}" alt="{esc(shot["alt"])}"{shot_dims} loading="lazy" decoding="async">
             <span class="gallery-caption">{esc(shot["caption"])}</span>
           </button>"""
         )
@@ -449,7 +808,7 @@ def render_app_page(data: dict, app: dict) -> str:
     other_apps = [other for other in apps if other["slug"] != app["slug"]]
     more_cards = "\n".join(
         f"""        <a class="more-app-card" href="../{esc(other["slug"])}/" style="--accent: {esc(other["accent"])}; --accent-rgb: {esc(other["accentRgb"])};">
-          <img class="app-icon app-icon-sm" src="../{esc(other["icon"])}" alt="{esc(other["title"])} icon" width="56" height="56" loading="lazy">
+          <img class="app-icon app-icon-sm" src="../{esc(other["icon"])}" alt="{esc(other["title"])} icon" width="56" height="56" loading="lazy" decoding="async">
           <div>
             <h3>{esc(other["title"])}</h3>
             <p>{esc(other["subtitle"])}</p>
@@ -464,33 +823,85 @@ def render_app_page(data: dict, app: dict) -> str:
         else "Coming Soon"
     )
 
+    seo_title = build_app_seo_title(site, app)
+    seo_description = app.get("seoDescription") or app["shortDescription"]
+    og_image_alt = f'{app["title"]} — {app["subtitle"]}'
+    hero_dims = img_dim_attrs(app["heroImage"])
+
+    graph: list[dict] = [
+        build_person_entity(site, domain),
+        build_software_app_entity(site, app, domain, full=True),
+        {
+            "@type": "BreadcrumbList",
+            "@id": f"{canonical}#breadcrumb",
+            "itemListElement": [
+                {
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": site["brandName"],
+                    "item": f"{domain}/",
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 2,
+                    "name": app["title"],
+                    "item": canonical,
+                },
+            ],
+        },
+    ]
+
+    if app.get("faq"):
+        graph.append(
+            {
+                "@type": "FAQPage",
+                "@id": f"{canonical}#faq",
+                "mainEntity": [
+                    {
+                        "@type": "Question",
+                        "name": item["q"],
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": item["a"],
+                        },
+                    }
+                    for item in app["faq"]
+                ],
+            }
+        )
+
+    if trailer and trailer.get("src"):
+        upload_date = (
+            parse_iso_date(trailer.get("uploadDate"))
+            or parse_iso_date(app.get("releaseDate"))
+            or date.today().isoformat()
+        )
+        video_entity: dict = {
+            "@type": "VideoObject",
+            "@id": f"{canonical}#trailer",
+            "name": f'{app["title"]} — {trailer.get("title", "Official Trailer")}',
+            "description": trailer.get("caption") or seo_description,
+            "thumbnailUrl": f'{domain}/{trailer.get("poster") or app["heroImage"]}',
+            "contentUrl": f'{domain}/{trailer["src"]}',
+            "uploadDate": upload_date,
+            "publisher": {"@id": f"{domain}/#person"},
+        }
+        graph.append(video_entity)
+
     json_ld = {
         "@context": "https://schema.org",
-        "@type": "SoftwareApplication",
-        "name": app["title"],
-        "description": app["shortDescription"],
-        "applicationCategory": app["category"],
-        "operatingSystem": app["minOs"],
-        "url": canonical,
-        "downloadUrl": app["stores"]["ios"],
-        "image": og_image,
-        "author": {
-            "@type": "Person",
-            "name": site["developerLegalName"],
-            "url": f"{domain}/",
-        },
-        "offers": {
-            "@type": "Offer",
-            "price": app["price"].replace("$", ""),
-            "priceCurrency": "USD",
-        },
+        "@graph": graph,
     }
 
     head = render_head(
-        title=f'{app["title"]} — {site["brandName"]}',
-        description=app["shortDescription"],
+        title=seo_title,
+        description=seo_description,
+        site_name=site["brandName"],
+        author=site["developerLegalName"],
         canonical_url=canonical,
         og_image_url=og_image,
+        og_image_alt=og_image_alt,
+        og_image_dims=og_dims,
         prefix="../",
         json_ld=json_ld,
     )
@@ -537,7 +948,7 @@ def render_app_page(data: dict, app: dict) -> str:
           </div>
 
           <div class="app-hero-visual{' is-portrait' if is_portrait else ''}">
-            <img src="../{esc(app["heroImage"])}" alt="{esc(app["title"])} hero showcase" fetchpriority="high">
+            <img src="../{esc(app["heroImage"])}" alt="{esc(app["title"])} hero showcase"{hero_dims} fetchpriority="high">
           </div>
         </div>
       </div>
@@ -674,9 +1085,12 @@ def render_404(data: dict) -> str:
     head = render_head(
         title=f'Page Not Found — {site["brandName"]}',
         description="The page you were looking for could not be found.",
-        canonical_url=f"{domain}/404.html",
+        site_name=site["brandName"],
+        author=site["developerLegalName"],
         og_image_url=f"{domain}/assets/favicon.svg",
+        og_image_alt=f'{site["brandName"]} logo',
         prefix="/",
+        noindex=True,
     )
     return f"""{head}
 <body>
@@ -695,19 +1109,250 @@ def render_404(data: dict) -> str:
 """
 
 
+def render_image_tag(loc: str, title: str, caption: str) -> str:
+    return (
+        "    <image:image>\n"
+        f"      <image:loc>{esc(loc)}</image:loc>\n"
+        f"      <image:title>{esc(title)}</image:title>\n"
+        f"      <image:caption>{esc(caption)}</image:caption>\n"
+        "    </image:image>"
+    )
+
+
 def render_sitemap(data: dict) -> str:
     domain = data["site"]["domain"].rstrip("/")
+    apps = data["apps"]
     today = date.today().isoformat()
-    urls = [f"{domain}/"] + [f'{domain}/{app["slug"]}/' for app in data["apps"]]
-    entries = "\n".join(
-        f"  <url>\n    <loc>{esc(url)}</loc>\n    <lastmod>{today}</lastmod>\n  </url>"
-        for url in urls
+
+    url_blocks: list[str] = []
+
+    # Homepage entry with each app's hero preview image
+    home_images: list[str] = []
+    seen_home: set[str] = set()
+    for app in apps:
+        src = app.get("heroImage")
+        if src and src not in seen_home:
+            seen_home.add(src)
+            home_images.append(
+                render_image_tag(
+                    f"{domain}/{src}",
+                    app["title"],
+                    app["subtitle"],
+                )
+            )
+    home_img_block = ("\n" + "\n".join(home_images)) if home_images else ""
+    url_blocks.append(
+        "  <url>\n"
+        f"    <loc>{esc(domain)}/</loc>\n"
+        f"    <lastmod>{today}</lastmod>\n"
+        "    <changefreq>weekly</changefreq>\n"
+        "    <priority>1.0</priority>"
+        f"{home_img_block}\n"
+        "  </url>"
     )
-    return f"""<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-{entries}
-</urlset>
-"""
+
+    # Dedicated app pages with hero + unique screenshots
+    for app in apps:
+        app_url = f'{domain}/{app["slug"]}/'
+        lastmod = parse_iso_date(app.get("releaseDate")) or today
+        images: list[str] = []
+        seen: set[str] = set()
+
+        hero_src = app.get("heroImage")
+        if hero_src:
+            seen.add(hero_src)
+            # Match caption from screenshots if heroImage is also in screenshots
+            hero_caption = app["subtitle"]
+            for shot in app.get("screenshots", []):
+                if shot.get("src") == hero_src and shot.get("caption"):
+                    hero_caption = shot["caption"]
+                    break
+            images.append(
+                render_image_tag(
+                    f"{domain}/{hero_src}",
+                    f'{app["title"]} — Hero Preview',
+                    hero_caption,
+                )
+            )
+
+        for shot in app.get("screenshots", []):
+            src = shot.get("src")
+            if not src or src in seen:
+                continue
+            seen.add(src)
+            images.append(
+                render_image_tag(
+                    f"{domain}/{src}",
+                    shot.get("alt") or app["title"],
+                    shot.get("caption") or app["subtitle"],
+                )
+            )
+
+        img_block = ("\n" + "\n".join(images)) if images else ""
+        url_blocks.append(
+            "  <url>\n"
+            f"    <loc>{esc(app_url)}</loc>\n"
+            f"    <lastmod>{lastmod}</lastmod>\n"
+            "    <changefreq>monthly</changefreq>\n"
+            "    <priority>0.9</priority>"
+            f"{img_block}\n"
+            "  </url>"
+        )
+
+    return (
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"\n'
+        '        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">\n'
+        f'{chr(10).join(url_blocks)}\n'
+        "</urlset>\n"
+    )
+
+
+def render_llms_txt(data: dict) -> str:
+    site = data["site"]
+    apps = data["apps"]
+    domain = site["domain"].rstrip("/")
+
+    app_bullets = []
+    for app in apps:
+        plat = app.get("platformLabel") or ", ".join(app.get("platforms", []))
+        android_status = app.get("stores", {}).get("android", {}).get("status", "")
+        android_note = ""
+        if android_status == "live" and app.get("stores", {}).get("android", {}).get("url"):
+            android_note = f' | Google Play: {app["stores"]["android"]["url"]}'
+        elif android_status == "coming-soon":
+            android_note = " (Android coming soon)"
+        app_bullets.append(
+            f'- [{app["title"]}]({domain}/{app["slug"]}/): {app["subtitle"]} '
+            f'({app["category"]}; {plat}; {app["price"]} one-time{android_note}). '
+            f'App Store: {app["stores"]["ios"]}'
+        )
+
+    official_links = [
+        f'- [Portfolio Homepage]({domain}/): Main catalog and developer overview',
+        f'- [Apple App Store Developer Page]({site["appStoreDeveloperUrl"]}): All live Apple releases by {site["developerLegalName"]}',
+    ]
+    if site.get("googlePlayDeveloperUrl"):
+        official_links.append(
+            f'- [Google Play Developer Page]({site["googlePlayDeveloperUrl"]}): Android releases'
+        )
+    official_links.extend(
+        [
+            f'- [Full Portfolio Dossier (llms-full.txt)]({domain}/llms-full.txt): Complete features, FAQs, specs, and privacy details for every app',
+            f'- [XML Sitemap]({domain}/sitemap.xml): Machine-readable URL and image index',
+            f'- Contact & Support: {site["contactEmail"]}',
+        ]
+    )
+
+    return (
+        f'# {site["brandName"]}\n\n'
+        f'> {site["tagline"]} {site["heroDescription"]}\n\n'
+        f'{site["developerLegalName"]} ({site["brandName"]}) is a solo independent developer building tactile games and interactive apps. '
+        "Every app follows a pay-once philosophy: $0.99 one-time purchase, zero ads, zero in-app purchases, zero accounts or personal data tracking, and full offline play. "
+        f'{site["androidStatusBanner"]}\n\n'
+        "## Games & Apps\n\n"
+        f'{chr(10).join(app_bullets)}\n\n'
+        "## Official Links\n\n"
+        f'{chr(10).join(official_links)}\n'
+    )
+
+
+def render_llms_full_txt(data: dict) -> str:
+    site = data["site"]
+    apps = data["apps"]
+    domain = site["domain"].rstrip("/")
+
+    sections: list[str] = [
+        f'# {site["brandName"]} — Full Portfolio & App Dossier\n',
+        f'> {site["tagline"]} {site["heroDescription"]}\n',
+        "## Developer Overview\n",
+        f'- **Developer**: {site["developerLegalName"]} ({site["brandName"]})',
+        f'- **Website**: {domain}/',
+        f'- **Apple App Store Developer Profile**: {site["appStoreDeveloperUrl"]}',
+    ]
+    if site.get("googlePlayDeveloperUrl"):
+        sections.append(f'- **Google Play Developer Profile**: {site["googlePlayDeveloperUrl"]}')
+    else:
+        sections.append(f'- **Android Status**: {site["androidStatusBanner"]}')
+    sections.append(f'- **Support & Contact Email**: {site["contactEmail"]}\n')
+
+    if site.get("pillars"):
+        sections.append("## Indie Philosophy\n")
+        for pillar in site["pillars"]:
+            sections.append(f'- **{pillar["title"]}**: {pillar["description"]}')
+        sections.append("")
+
+    for app in apps:
+        canonical = f'{domain}/{app["slug"]}/'
+        android = app.get("stores", {}).get("android", {})
+        android_line = (
+            android["url"]
+            if android.get("status") == "live" and android.get("url")
+            else "Coming Soon"
+        )
+        sections.append(f'## {app["title"]}\n')
+        sections.append(f'> {app["subtitle"]}\n')
+        sections.append(f'- **Canonical Page**: {canonical}')
+        sections.append(f'- **App Store**: {app["stores"]["ios"]}')
+        sections.append(f'- **Android / Google Play**: {android_line}')
+        sections.append(f'- **Category**: {app["category"]}')
+        sections.append(f'- **Price**: {app["price"]} ({app["pricingNote"]})')
+        sections.append(f'- **Platforms**: {", ".join(app["platforms"])}')
+        sections.append(f'- **Minimum OS**: {app["minOs"]}')
+        sections.append(f'- **Age Rating**: {app["rating"]}')
+        sections.append(f'- **Version**: {app["version"]}')
+        sections.append(f'- **Release Date**: {app["releaseDate"]}')
+        sections.append(f'- **Plays Offline**: {"Yes" if app.get("offline") else "No"}')
+        if app.get("trailer") and app["trailer"].get("src"):
+            sections.append(f'- **Official Trailer**: {domain}/{app["trailer"]["src"]}')
+        sections.append("")
+
+        sections.append("### Overview\n")
+        sections.append(app["leadParagraph"])
+        for para in app.get("bodyParagraphs", []):
+            sections.append(f"\n{para}")
+        sections.append("")
+
+        if app.get("features"):
+            sections.append("### Features\n")
+            for feat in app["features"]:
+                sections.append(f'- **{feat["title"]}**: {feat["description"]}')
+            sections.append("")
+
+        if app.get("highlights"):
+            sections.append("### Highlights\n")
+            for item in app["highlights"]:
+                sections.append(f"- {item}")
+            sections.append("")
+
+        if app.get("notices"):
+            sections.append("### Notices & Tips\n")
+            for notice in app["notices"]:
+                sections.append(f'- **{notice["title"]}**: {notice["text"]}')
+            sections.append("")
+
+        if app.get("faq"):
+            sections.append("### Frequently Asked Questions\n")
+            for item in app["faq"]:
+                sections.append(f'**Q: {item["q"]}**\n{item["a"]}\n')
+
+        sections.append("### Privacy & Support\n")
+        sections.append(f'- **Privacy**: {app["privacySummary"]}')
+        sections.append(f'- **Support**: {site["contactEmail"]} ({canonical}#support)\n')
+
+    return "\n".join(sections).rstrip() + "\n"
+
+
+def render_robots_txt(data: dict) -> str:
+    domain = data["site"]["domain"].rstrip("/")
+    return (
+        "# LLM-friendly site summaries:\n"
+        f"# {domain}/llms.txt\n"
+        f"# {domain}/llms-full.txt\n\n"
+        "User-agent: *\n"
+        "Allow: /\n\n"
+        f"Sitemap: {domain}/sitemap.xml\n"
+    )
 
 
 def main() -> None:
@@ -725,14 +1370,13 @@ def main() -> None:
         (out_dir / "index.html").write_text(render_app_page(data, app), encoding="utf-8")
         print(f"Generated {slug}/index.html")
 
-    # Generate 404, sitemap, robots.txt
+    # Generate 404, sitemap, robots.txt, llms.txt, llms-full.txt
     (ROOT / "404.html").write_text(render_404(data), encoding="utf-8")
     (ROOT / "sitemap.xml").write_text(render_sitemap(data), encoding="utf-8")
-    (ROOT / "robots.txt").write_text(
-        f'User-agent: *\nAllow: /\nSitemap: {data["site"]["domain"].rstrip("/")}/sitemap.xml\n',
-        encoding="utf-8",
-    )
-    print("Generated 404.html, sitemap.xml, robots.txt")
+    (ROOT / "robots.txt").write_text(render_robots_txt(data), encoding="utf-8")
+    (ROOT / "llms.txt").write_text(render_llms_txt(data), encoding="utf-8")
+    (ROOT / "llms-full.txt").write_text(render_llms_full_txt(data), encoding="utf-8")
+    print("Generated 404.html, sitemap.xml, robots.txt, llms.txt, llms-full.txt")
 
 
 if __name__ == "__main__":

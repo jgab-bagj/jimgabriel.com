@@ -1,19 +1,133 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://www.jimgabriel.com/</loc>
-    <lastmod>2026-11-26</lastmod>
+    <lastmod>2026-11-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://www.jimgabriel.com/assets/apps/rock-paper-carnage/screenshot-01-cannon.jpg</image:loc>
+      <image:title>Rock, Paper, Carnage</image:title>
+      <image:caption>Rock, paper, scissors with finishing moves.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.jimgabriel.com/assets/apps/plasma-globe/hero-ipad.jpg</image:loc>
+      <image:title>Plasma Globe: Fidget Lamp</image:title>
+      <image:caption>A classic plasma ball under your fingers.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.jimgabriel.com/assets/apps/school-time/screenshot-01-01_school_and_timer.jpg</image:loc>
+      <image:title>School Time!</image:title>
+      <image:caption>A living reef aquarium you can touch — and a timer you can watch.</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://www.jimgabriel.com/rock-paper-carnage/</loc>
-    <lastmod>2026-11-26</lastmod>
+    <lastmod>2026-11-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://www.jimgabriel.com/assets/apps/rock-paper-carnage/screenshot-01-cannon.jpg</image:loc>
+      <image:title>Rock, Paper, Carnage — Hero Preview</image:title>
+      <image:caption>Circus Big Top — confetti, chaos, and cannon finishers</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.jimgabriel.com/assets/apps/rock-paper-carnage/screenshot-02-microwave.jpg</image:loc>
+      <image:title>Rock, Paper, Carnage office break room microwave finisher</image:title>
+      <image:caption>Office Break Room — settle workplace disputes the hard way</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.jimgabriel.com/assets/apps/rock-paper-carnage/screenshot-03-davyjones.jpg</image:loc>
+      <image:title>Rock, Paper, Carnage Davy Jones Kraken finisher</image:title>
+      <image:caption>The Kraken — survive the deep sea&#x27;s hungriest challenger</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.jimgabriel.com/assets/apps/rock-paper-carnage/screenshot-04-feeding.jpg</image:loc>
+      <image:title>Rock, Paper, Carnage aquarium hall arena</image:title>
+      <image:caption>Aquarium Hall — square off against the silverback</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.jimgabriel.com/assets/apps/rock-paper-carnage/screenshot-05-abducted.jpg</image:loc>
+      <image:title>Rock, Paper, Carnage Galactic Warlord arena</image:title>
+      <image:caption>Galactic Warlord — intergalactic game show showdown</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://www.jimgabriel.com/plasma-globe/</loc>
-    <lastmod>2026-11-26</lastmod>
+    <lastmod>2026-11-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://www.jimgabriel.com/assets/apps/plasma-globe/hero-ipad.jpg</image:loc>
+      <image:title>Plasma Globe: Fidget Lamp — Hero Preview</image:title>
+      <image:caption>A classic plasma ball under your fingers.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.jimgabriel.com/assets/apps/plasma-globe/screenshot-01-01-violet.jpg</image:loc>
+      <image:title>Plasma Globe classic electric violet lightning</image:title>
+      <image:caption>Classic Violet — multitouch lightning arcs leaping to the glass</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.jimgabriel.com/assets/apps/plasma-globe/screenshot-02-02-selector.jpg</image:loc>
+      <image:title>Plasma Globe color and spectrum selector</image:title>
+      <image:caption>Spectrum Selector — ten presets plus continuous wavelength tuning</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.jimgabriel.com/assets/apps/plasma-globe/screenshot-03-03-gold.jpg</image:loc>
+      <image:title>Plasma Globe warm solar gold filaments</image:title>
+      <image:caption>Solar Gold — warm ambient desk lamp glow</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.jimgabriel.com/assets/apps/plasma-globe/screenshot-04-04-green.jpg</image:loc>
+      <image:title>Plasma Globe emerald green plasma arcs</image:title>
+      <image:caption>Emerald Glow — rich neon green electric arcs</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.jimgabriel.com/assets/apps/plasma-globe/screenshot-05-05-hot-pink.jpg</image:loc>
+      <image:title>Plasma Globe hot pink lightning filaments</image:title>
+      <image:caption>Hot Pink — electric magenta plasma filaments</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://www.jimgabriel.com/school-time/</loc>
-    <lastmod>2026-11-26</lastmod>
+    <lastmod>2026-11-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://www.jimgabriel.com/assets/apps/school-time/screenshot-01-01_school_and_timer.jpg</image:loc>
+      <image:title>School Time! — Hero Preview</image:title>
+      <image:caption>1,600 golden fish schooling across the reef with timer controls</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.jimgabriel.com/assets/apps/school-time/screenshot-02-02_hunt_0_36.jpg</image:loc>
+      <image:title>School Time barracuda hunting during a countdown</image:title>
+      <image:caption>The Hunt Begins — barracuda pace the countdown fish by fish</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.jimgabriel.com/assets/apps/school-time/screenshot-03-03_with_the_school.jpg</image:loc>
+      <image:title>School Time camera swimming along with the school</image:title>
+      <image:caption>Swim With the School — follow the golden shoal up close</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.jimgabriel.com/assets/apps/school-time/screenshot-04-04_nearly_done.jpg</image:loc>
+      <image:title>School Time nearly finished timer with small remaining school</image:title>
+      <image:caption>Nearly Done — read remaining time at a single glance</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.jimgabriel.com/assets/apps/school-time/screenshot-05-05_times_up.jpg</image:loc>
+      <image:title>School Time countdown complete on the coral reef</image:title>
+      <image:caption>Time&#x27;s Up — the last fish vanishes and the buoy bell rings</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.jimgabriel.com/assets/apps/school-time/screenshot-06-06_close_up.jpg</image:loc>
+      <image:title>School Time close-up view of coral reef and sea life</image:title>
+      <image:caption>Coral Reef Details — vibrant corals, anemones, and reef fish</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.jimgabriel.com/assets/apps/school-time/screenshot-07-07_long_view.jpg</image:loc>
+      <image:title>School Time long panoramic gallery view of the reef</image:title>
+      <image:caption>Long Gallery View — pan and zoom across four camera angles</image:caption>
+    </image:image>
   </url>
 </urlset>

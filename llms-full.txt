@@ -1,0 +1,182 @@
+# Jim Gabriel — Full Portfolio & App Dossier
+
+> Tactile games & playful apps, built to own. Independent developer crafting expressive, touch-first games and interactive toys for iOS, iPadOS, and macOS — with Android releases on the way.
+
+## Developer Overview
+
+- **Developer**: James Gabriel (Jim Gabriel)
+- **Website**: https://www.jimgabriel.com/
+- **Apple App Store Developer Profile**: https://apps.apple.com/us/developer/james-louis-gabriel/id6833727433
+- **Android Status**: Android versions are currently in development. More games and interactive apps coming soon.
+- **Support & Contact Email**: jimgabriel2021@gmail.com
+
+## Indie Philosophy
+
+- **Pay Once, Own Forever**: Every release is a straightforward $0.99 one-time purchase. No subscriptions, no paywalls, and no in-app purchases.
+- **Zero Ads, Zero Tracking**: No accounts required, no ad networks, and no personal data collected. Your apps stay cleanly on your device.
+- **Built for Touch & Play**: Designed around tactile multitouch, responsive haptics, atmospheric sound, and offline play anywhere.
+
+## Rock, Paper, Carnage
+
+> Rock, paper, scissors with finishing moves.
+
+- **Canonical Page**: https://www.jimgabriel.com/rock-paper-carnage/
+- **App Store**: https://apps.apple.com/us/app/rock-paper-carnage/id6833727431
+- **Android / Google Play**: Coming Soon
+- **Category**: Game · Action / Arcade
+- **Price**: $0.99 (One-time purchase · iOS & iPadOS · No ads · No IAP)
+- **Platforms**: iOS, iPadOS
+- **Minimum OS**: iOS / iPadOS 15.0+
+- **Age Rating**: 12+ / 13+
+- **Version**: 1.0
+- **Release Date**: November 15, 2026
+- **Plays Offline**: Yes
+- **Official Trailer**: https://www.jimgabriel.com/assets/apps/rock-paper-carnage/trailer.mp4
+
+### Overview
+
+You were on your couch. Now you're a contestant on the galaxy's most violent game show, and the only thing you brought is your hand.
+
+Rock, Paper, Carnage is rock, paper, scissors with finishing moves. Win the throw, punch in the combo before the clock runs out, and your hand turns into a boulder, a buzzsaw, a storm of paper cuts, and more. Miss it and the crowd boos. Lose the round and your opponent finishes you.
+
+### Features
+
+- **Read Your Opponent**: Every opponent has a tell — and most of the time it tells the truth. Spot it, throw what beats it, and earn that level's signature finisher.
+- **Rhythm Showdowns**: Throw the same sign and your hands lock into a rhythm duel set to an original song. Win a showdown for a star; two stars unlock your Ultimate.
+- **Eight Opponents, Eight Arenas**: Face a baby monkey under the circus big top, a toddler at daycare, an orangutan in the rainforest canopy, a coworker in the office break room, a bodybuilder at the beach gym, a silverback in the aquarium hall, the Galactic Warlord, and the Kraken.
+- **Unlock More Carnage**: Earn points on the reward track to unlock finishers like the Wrecking Ball, the Guillotine, and the Meteor — plus blood styles from slime to confetti. Beat a boss to unlock Hard Mode.
+
+### Highlights
+
+- $0.99 one-time purchase — no ads, no in-app purchases
+- Plays completely offline
+- Built for touch with haptics on every press
+- Universal iOS and iPadOS app
+
+### Frequently Asked Questions
+
+**Q: Where is my progress saved?**
+All game progress is saved locally on your device. Deleting the app removes your saved progress.
+
+**Q: Does the game require an internet connection?**
+No. Rock, Paper, Carnage plays completely offline.
+
+**Q: Are there ads or in-app purchases?**
+No. It is a single $0.99 one-time purchase with zero ads and zero in-app purchases.
+
+**Q: Why does iOS mention the camera or microphone in diagnostics?**
+That reference comes from code bundled inside the game engine's video player. Rock, Paper, Carnage never accesses your camera or microphone.
+
+### Privacy & Support
+
+- **Privacy**: Rock, Paper, Carnage collects no personal data, requires no account, and contains no third-party ad or analytics trackers.
+- **Support**: jimgabriel2021@gmail.com (https://www.jimgabriel.com/rock-paper-carnage/#support)
+
+## Plasma Globe: Fidget Lamp
+
+> A classic plasma ball under your fingers.
+
+- **Canonical Page**: https://www.jimgabriel.com/plasma-globe/
+- **App Store**: https://apps.apple.com/us/app/plasma-globe-fidget-lamp/id6835380705
+- **Android / Google Play**: Coming Soon
+- **Category**: Interactive · Fidget & Desk Lamp
+- **Price**: $0.99 (One purchase covers iOS, iPadOS & macOS · No ads · No IAP)
+- **Platforms**: iOS, iPadOS, macOS
+- **Minimum OS**: iOS / iPadOS 17.0+ · macOS
+- **Age Rating**: 4+
+- **Version**: 1.0
+- **Release Date**: November 18, 2026
+- **Plays Offline**: Yes
+
+### Overview
+
+Plasma Globe puts a classic plasma ball under your fingers. Touch the glass and lightning leaps from the coil to meet you, one bolt for every finger.
+
+Built to feel alive on a desk or in your hands, Plasma Globe pairs real multitouch lightning with responsive haptics, subtle tilt parallax, and rich night-room ambience. Leave it untouched and it settles into a calm, glowing desk lamp.
+
+### Features
+
+- **Real Multitouch Lightning**: Every finger draws its own crackling filament — up to five simultaneous bolts on iPhone and even more on iPad.
+- **Tactile Haptics & Sound**: Feel a low electric hum and sharp snaps on iPhone as arcs jump to your fingertips, paired with reactive crackle and night-time ambience of crickets, crows, and the occasional cat.
+- **Ten Colors & Spectrum Tube**: Pick from ten vivid lightning presets or sweep continuously across the spectrum tube to tune any wavelength.
+- **Atmosphere & Desk Lamp Mode**: Tilt your device to peer around the glass sphere amid drifting fog, a swinging lamp, and moving shadows. The screen stays awake, settling into a calm glow when left untouched.
+
+### Highlights
+
+- One $0.99 purchase covers iOS, iPadOS, and macOS
+- No accounts, no ads, and no data collected
+- Screen-awake desk lamp mode for ambient lighting
+- Tilt parallax and multitouch haptics
+
+### Notices & Tips
+
+- **Tip for iPad Users**: Four- and five-finger swipes belong to iPadOS system gestures. To rest your whole hand flat on the glass, disable them in Settings → Multitasking & Gestures.
+- **Visual Sensitivity Note**: Contains flickering and flashing light effects.
+
+### Frequently Asked Questions
+
+**Q: Does one purchase work across all my Apple devices?**
+Yes — a single $0.99 purchase unlocks Plasma Globe across iOS, iPadOS, and macOS.
+
+**Q: Can I leave it running as a desk lamp?**
+Yes. Plasma Globe keeps your screen awake and automatically settles into a calmer ambient glow whenever it's left untouched.
+
+**Q: Does it require an account or internet connection?**
+No accounts, no internet required, no ads, and zero data collection.
+
+### Privacy & Support
+
+- **Privacy**: Plasma Globe: Fidget Lamp requires no account, shows no ads, and collects zero personal data.
+- **Support**: jimgabriel2021@gmail.com (https://www.jimgabriel.com/plasma-globe/#support)
+
+## School Time!
+
+> A living reef aquarium you can touch — and a timer you can watch.
+
+- **Canonical Page**: https://www.jimgabriel.com/school-time/
+- **App Store**: https://apps.apple.com/us/app/school-time/id6835664971
+- **Android / Google Play**: Coming Soon
+- **Category**: Interactive · Reef Timer & Aquarium
+- **Price**: $0.99 (One-time purchase · iPad & macOS · No ads · No tracking)
+- **Platforms**: iPad, macOS
+- **Minimum OS**: iPadOS 18.0+ · macOS
+- **Age Rating**: 4+
+- **Version**: 1.0
+- **Release Date**: November 18, 2026
+- **Plays Offline**: Yes
+
+### Overview
+
+School Time is a living reef aquarium you can touch, and a timer you can watch.
+
+Sixteen hundred golden fish swim as one across a sunlit coral reef. Lead them with a finger, split the school with two hands, or let them roam freely on a second screen. When it's time to focus, set any timer from 30 seconds to 2 hours and press HUNT — a pack of barracuda drops in and catches the fish at the exact pace of your countdown.
+
+### Features
+
+- **Lead 1,600 Golden Fish**: Touch the glass and the entire school follows your finger. Spread two fingers to split the school in two, bring them together to merge, or tap to startle them.
+- **The Barracuda Countdown**: Set any timer from 0:30 to 2:00:00 and press HUNT. One glance tells you how much time remains: it's the size of the school. When the last fish disappears in a puff of bubbles, a buoy bell rings.
+- **Four Living Reef Views**: Explore corals, sea fans, sponges, clownfish, tangs, parrotfish, and nautiluses from four camera perspectives — in the tank, gallery window, down the reef, or swimming with the school — each with pan and zoom.
+- **Built for Focus & Everyday Timers**: Keeps ticking in the background with optional finish notifications, subtle sonar pings, pause/resume controls, and an automatic power saver for long sessions.
+
+### Highlights
+
+- Timers from 30 seconds to 2 hours with exact custom entry
+- No blood or gore — caught fish vanish in a puff of bubbles
+- Works offline with no accounts, no ads, and no tracking
+- Great for focus sessions, study breaks, board games, or tea
+
+### Frequently Asked Questions
+
+**Q: Does the timer keep running if I lock my screen or switch apps?**
+Yes. The timer stays accurate in the background and sends a notification when time is up if notifications are allowed.
+
+**Q: Is it kid-friendly?**
+Yes — rated 4+ with no blood or gore. When a barracuda catches a fish, it disappears in a puff of bubbles.
+
+**Q: Can I just watch the aquarium without setting a timer?**
+Absolutely. Lift your hand and the school roams naturally across the reef, making it great to leave running on an iPad or second screen.
+
+### Privacy & Support
+
+- **Privacy**: School Time! works completely offline, requires no account, displays no ads, and collects no personal data or tracking.
+- **Support**: jimgabriel2021@gmail.com (https://www.jimgabriel.com/school-time/#support)

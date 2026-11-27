@@ -1,0 +1,19 @@
+# Jim Gabriel
+
+> Tactile games & playful apps, built to own. Independent developer crafting expressive, touch-first games and interactive toys for iOS, iPadOS, and macOS — with Android releases on the way.
+
+James Gabriel (Jim Gabriel) is a solo independent developer building tactile games and interactive apps. Every app follows a pay-once philosophy: $0.99 one-time purchase, zero ads, zero in-app purchases, zero accounts or personal data tracking, and full offline play. Android versions are currently in development. More games and interactive apps coming soon.
+
+## Games & Apps
+
+- [Rock, Paper, Carnage](https://www.jimgabriel.com/rock-paper-carnage/): Rock, paper, scissors with finishing moves. (Game · Action / Arcade; iOS & iPadOS; $0.99 one-time (Android coming soon)). App Store: https://apps.apple.com/us/app/rock-paper-carnage/id6833727431
+- [Plasma Globe: Fidget Lamp](https://www.jimgabriel.com/plasma-globe/): A classic plasma ball under your fingers. (Interactive · Fidget & Desk Lamp; iOS, iPadOS & macOS; $0.99 one-time (Android coming soon)). App Store: https://apps.apple.com/us/app/plasma-globe-fidget-lamp/id6835380705
+- [School Time!](https://www.jimgabriel.com/school-time/): A living reef aquarium you can touch — and a timer you can watch. (Interactive · Reef Timer & Aquarium; iPad & macOS; $0.99 one-time (Android coming soon)). App Store: https://apps.apple.com/us/app/school-time/id6835664971
+
+## Official Links
+
+- [Portfolio Homepage](https://www.jimgabriel.com/): Main catalog and developer overview
+- [Apple App Store Developer Page](https://apps.apple.com/us/developer/james-louis-gabriel/id6833727433): All live Apple releases by James Gabriel
+- [Full Portfolio Dossier (llms-full.txt)](https://www.jimgabriel.com/llms-full.txt): Complete features, FAQs, specs, and privacy details for every app
+- [XML Sitemap](https://www.jimgabriel.com/sitemap.xml): Machine-readable URL and image index
+- Contact & Support: jimgabriel2021@gmail.com
